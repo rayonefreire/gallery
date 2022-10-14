@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Alert,
   FlatList,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   View
@@ -15,6 +14,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Item } from '../../components/Item';
 import { styles } from './styles';
+
+// AsyncStorage.clear()
 
 export function Home(){
   const [images, setImages] = useState([]);
@@ -30,25 +31,28 @@ export function Home(){
       return;
     }
 
-    let pickerResult = await ImagePicker.launchImageLibraryAsync();
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsMultipleSelection: true,
+      quality: 1,
+    });
     console.log(pickerResult);
 
     if (pickerResult.cancelled === true) {
       return;
     }
 
-    if (pickerResult.uri in images) {
-      Alert.alert("Ops!", "Você já adicionou essa imagem.");
-      return;
-    } else {
-      images.push(pickerResult.uri);
+    const array = pickerResult.selected;
+    
+    array.map(item => {
+      images.push(item.uri);
+    });
 
-      AsyncStorage.setItem("@IMAGES", JSON.stringify(images));
-      getImages();
-    }
+    AsyncStorage.setItem("@IMAGES", JSON.stringify(images));
+    getImages();
   };
 
-  // atualiza a lista de imagens
+  // função que atualiza a lista de imagens
   async function getImages() {
     const lista = await AsyncStorage.getItem("@IMAGES");
 
@@ -72,7 +76,7 @@ export function Home(){
             image={item}
           />
         }
-        style={{ paddingTop: 70, marginHorizontal: -1 }}
+        style={{ paddingTop: 50, marginHorizontal: -1 }}
         numColumns={5}
         horizontal={false}
         ListHeaderComponent={() => (

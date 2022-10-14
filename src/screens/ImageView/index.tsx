@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {
-  View,
   Image,
   SafeAreaView
 } from 'react-native';
@@ -15,7 +14,7 @@ export function ImageView({ route }){
     <SafeAreaView style={styles.container}>
       <Image
         source={{ uri: item }}
-        resizeMode="contain"
+        resizeMode="cover"
         style={{
           height: '85%',
           width: '100%',
